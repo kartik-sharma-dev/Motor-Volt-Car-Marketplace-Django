@@ -98,11 +98,19 @@ def home(request):
     makes = cars.objects.filter(is_approved=True).values_list('make', flat=True).distinct()
     years = cars.objects.filter(is_approved=True).values_list('year', flat=True).distinct().order_by('-year')
     total_listings = cars.objects.filter(is_approved=True).count()
+    selected_make = request.GET.get('make', '')
+    models_for_make = (
+        cars.objects.filter(is_approved=True, make=selected_make)
+        .values_list('model', flat=True).distinct()
+        if selected_make else []
+    )
     return render(request, 'home.html', {
         'featured_cars': featured_cars,
         'makes': makes,
         'years': years,
         'total_listings': total_listings,
+        'models_for_make': models_for_make,
+        'selected_make': selected_make,
     })
 
 def listings(request):
