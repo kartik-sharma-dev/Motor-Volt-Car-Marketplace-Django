@@ -38,10 +38,14 @@ def _send_otp_email(to_email, otp):
 
 
 def members(request):
+    if request.user.is_authenticated:
+        return redirect('home')
     form = UserForm()
     return render(request, 'signup.html', {'form': form})
 
 def register_user(request):
+    if request.user.is_authenticated:
+        return redirect('home')
     if request.method == 'POST':
         form = UserForm(request.POST)
 
@@ -364,6 +368,8 @@ def resend_otp(request):
 
 @csrf_exempt
 def verify_otp(request):
+    if request.user.is_authenticated:
+        return redirect('home')
     email = request.session.get('verify_email')
     pending = request.session.get('pending_user')
 
