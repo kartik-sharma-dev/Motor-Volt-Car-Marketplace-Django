@@ -111,8 +111,8 @@ def sell(request):
         if form.is_valid():
             car = form.save(commit=False)
             car.owner = request.user
-            if 'image' in request.FILES:
-                car.image = request.FILES['image']
+            if 'images' in request.FILES:
+              car.image = request.FILES.getlist('images')[0]
             car.save()
             messages.success(request, 'Car listed successfully!')
             return redirect('dashboard')
@@ -173,8 +173,8 @@ def edit_car(request, pk):
         if form.is_valid():
             updated = form.save(commit=False)
 
-            if 'image' in request.FILES:
-             updated.image = request.FILES['image']
+            if 'images' in request.FILES:
+              updated.image = request.FILES.getlist('images')[0]
 
             updated.save()
             messages.success(request, 'Car updated successfully!')
