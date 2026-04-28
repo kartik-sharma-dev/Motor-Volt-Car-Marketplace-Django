@@ -114,3 +114,6 @@ import logging
 logger = logging.getLogger(__name__)
 logger.warning(f"CLOUDINARY_CLOUD_NAME: {os.environ.get('CLOUDINARY_CLOUD_NAME')}")
 logger.warning(f"CLOUDINARY_API_KEY: {os.environ.get('CLOUDINARY_API_KEY')}")
+
+print("CLOUDINARY_CLOUD_NAME:", os.environ.get('CLOUDINARY_CLOUD_NAME'))
+print("CLOUDINARY_API_KEY:", os.environ.get('CLOUDINARY_API_KEY'))
