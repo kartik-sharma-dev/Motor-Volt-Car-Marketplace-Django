@@ -66,16 +66,23 @@ def register_user(request):
 
             otp = str(random.randint(100000, 999999))
 
+            print(f"\n[DEV] OTP for {email}: {otp}\n")
+            try:
+                _send_otp_email(email, otp)
+            except Exception as e:
+                print(f"[ERROR] Failed to send OTP email: {e}")
+                messages.error(request, 'Failed to send OTP email. Please try again.', extra_tags='error')
+                return render(request, 'signup.html', {'form': form})
+
             request.session['pending_user'] = {
                 'username': form.cleaned_data.get('username'),
                 'email': email,
+                'phone_number': phone,
                 'password': form.cleaned_data['password'],
                 'otp': otp,
             }
             request.session['verify_email'] = email
-
-            print(f"\n[DEV] OTP for {email}: {otp}\n")
-            _send_otp_email(email, otp)
+            request.session.save()
             return redirect('verify_otp')
 
     else:
@@ -384,6 +391,7 @@ def verify_otp(request):
             user = User(
                 username=pending.get('username'),
                 email=pending['email'],
+                phone_number=pending.get('phone_number') or None,
                 is_verified=True,
             )
             user.set_password(pending['password'])
