@@ -40,7 +40,7 @@
       <p class="hero__sub">Curated luxury, sports & everyday vehicles — inspected, certified, and ready to own.</p>
 
       <!-- Search bar -->
-      <form class="search-bar" method="GET" action="{% url 'listings' %}">
+      <!-- <form class="search-bar" method="GET" action="{% url 'listings' %}">
         <select name="make" class="search-bar__select">
           <option value="">Make</option>
           {% for make in makes %}
@@ -62,15 +62,15 @@
         </select>
         <input type="number" name="max_price" placeholder="Max Price (₹)" class="search-bar__input" value="{{ request.GET.max_price }}">
         <button type="submit" class="btn btn--primary btn--search">Search</button>
-      </form>
+      </form> -->
 
-      <div class="hero__tags">
+      <!-- <div class="hero__tags">
         <a href="{% url 'listings' %}?type=sedan" class="tag">Sedan</a>
         <a href="{% url 'listings' %}?type=suv" class="tag">SUV</a>
         <a href="{% url 'listings' %}?type=sports" class="tag">Sports</a>
         <a href="{% url 'listings' %}?type=electric" class="tag">Electric</a>
         <a href="{% url 'listings' %}?type=luxury" class="tag">Luxury</a>
-      </div>
+      </div> -->
     </div>
     <div class="hero__image-wrap">
       <div class="hero__image-frame">
