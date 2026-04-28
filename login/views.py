@@ -381,6 +381,10 @@ def verify_otp(request):
     pending = request.session.get('pending_user')
 
     if not email or not pending:
+        # Guard against double-submit race: if account was just created, send to login
+        if email and User.objects.filter(email=email, is_verified=True).exists():
+            messages.success(request, 'Account created! Please log in.')
+            return redirect('login')
         messages.error(request, 'Session expired. Please signup again.')
         return redirect('signup')
 

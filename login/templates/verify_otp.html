@@ -207,13 +207,27 @@
       sessionStorage.removeItem('otpExpiry');
     });
 
+    // ── Single-submit guard ──
+    let submitting = false;
+    function submitOnce() {
+      if (submitting) return;
+      submitting = true;
+      document.getElementById('submitBtn').disabled = true;
+      syncHidden();
+      document.getElementById('otpForm').submit();
+    }
+
+    // Intercept manual button click / Enter key
+    document.getElementById('otpForm').addEventListener('submit', (e) => {
+      if (submitting) { e.preventDefault(); return; }
+      submitting = true;
+      document.getElementById('submitBtn').disabled = true;
+      syncHidden();
+    });
+
     // ── Auto-submit when all 6 filled ──
     function checkAutoSubmit() {
-      const full = boxes.every(b => b.value.length === 1);
-      if (full) {
-        syncHidden();
-        document.getElementById('otpForm').submit();
-      }
+      if (boxes.every(b => b.value.length === 1)) submitOnce();
     }
     boxes.forEach(b => b.addEventListener('input', checkAutoSubmit));
   </script>
