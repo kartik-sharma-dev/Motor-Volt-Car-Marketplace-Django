@@ -352,6 +352,7 @@ def resend_otp(request):
         pending = request.session.get('pending_user')
         if not email or not pending:
             messages.error(request, 'Session expired. Please signup again.')
+            return redirect('signup')
 
         new_otp = str(random.randint(100000, 999999))
         pending['otp'] = new_otp
@@ -368,6 +369,7 @@ def verify_otp(request):
 
     if not email or not pending:
         messages.error(request, 'Session expired. Please signup again.')
+        return redirect('signup')
 
     if request.method == 'POST':
         entered_otp = request.POST.get('otp')
