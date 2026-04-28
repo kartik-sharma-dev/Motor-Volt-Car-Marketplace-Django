@@ -108,3 +108,9 @@ CLOUDINARY_STORAGE = {
 }
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+
+import logging
+logger = logging.getLogger(__name__)
+logger.warning(f"CLOUDINARY_CLOUD_NAME: {os.environ.get('CLOUDINARY_CLOUD_NAME')}")
+logger.warning(f"CLOUDINARY_API_KEY: {os.environ.get('CLOUDINARY_API_KEY')}")
