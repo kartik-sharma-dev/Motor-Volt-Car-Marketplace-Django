@@ -129,11 +129,13 @@
           {% for car in user_cars %}
           <div class="car-card">
             <div class="car-card__img-wrap">
-              {% if car.image %}
-                <img src="{{ car.image.url }}" alt="{{ car.make }}" class="car-card__img">
+              {% with imgs=car.images.all %}
+              {% if imgs %}
+                <img src="{{ imgs.0.image.url }}" alt="{{ car.make }}" class="car-card__img">
               {% else %}
                 <div class="car-card__img-placeholder">IMAGE N/A</div>
               {% endif %}
+              {% endwith %}
 
               <div class="status-badge {% if car.is_approved %}status-badge--green{% else %}status-badge--red{% endif %}">
                 <span class="status-dot"></span>

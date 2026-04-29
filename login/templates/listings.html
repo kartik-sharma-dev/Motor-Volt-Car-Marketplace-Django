@@ -50,8 +50,9 @@
 
       <!-- Image -->
       <div class="car-card__img-wrap">
-        {% if car.image %}
-          <img src="{{ car.image.url }}" alt="{{ car.brand }} {{ car.model }}" class="car-card__img" loading="lazy">
+        {% with imgs=car.images.all %}
+        {% if imgs %}
+          <img src="{{ imgs.0.image.url }}" alt="{{ car.make }} {{ car.model }}" class="car-card__img" loading="lazy">
         {% else %}
           <div class="car-card__img-placeholder">
             <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1" stroke-linecap="round">
@@ -59,6 +60,7 @@
             </svg>
           </div>
         {% endif %}
+        {% endwith %}
         <!-- Fuel badge -->
         <span class="fuel-badge fuel-badge--{{ car.fuel_type|lower }}">{{ car.fuel_type }}</span>
       </div>

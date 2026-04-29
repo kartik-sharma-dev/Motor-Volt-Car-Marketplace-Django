@@ -128,8 +128,9 @@
       {% for car in featured_cars %}
       <article class="car-card">
         <a href="{% url 'car_detail' car.pk %}" class="car-card__img-wrap">
-          {% if car.image %}
-            <img src="{{ car.image.url }}" alt="{{ car.year }} {{ car.make }} {{ car.model }}" class="car-card__img">
+          {% with imgs=car.images.all %}
+          {% if imgs %}
+            <img src="{{ imgs.0.image.url }}" alt="{{ car.year }} {{ car.make }} {{ car.model }}" class="car-card__img">
           {% else %}
             <div class="car-card__img-placeholder">
               <svg viewBox="0 0 80 45" fill="none" xmlns="http://www.w3.org/2000/svg" width="80" opacity="0.25">
@@ -140,6 +141,7 @@
               </svg>
             </div>
           {% endif %}
+          {% endwith %}
           {% if car.is_certified %}
             <span class="car-card__badge">Certified</span>
           {% endif %}
