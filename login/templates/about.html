@@ -18,8 +18,13 @@
       <li><a href="{% url 'about' %}" class="active">About</a></li>
     </ul>
     <div class="nav-actions">
-      <a href="{% url 'dashboard' %}" class="btn-ghost">Dashboard</a>
-      <a href="{% url 'logout' %}" class="btn-yellow">Log Out</a>
+      {% if user.is_authenticated %}
+        <a href="{% url 'dashboard' %}" class="btn-ghost">Dashboard</a>
+        <a href="{% url 'logout' %}" class="btn-yellow">Log Out</a>
+      {% else %}
+        <a href="{% url 'login' %}" class="btn-ghost">Log In</a>
+        <a href="{% url 'signup' %}" class="btn-yellow">Sign Up</a>
+      {% endif %}
     </div>
     <button class="nav-toggle" id="navToggle">&#9776;</button>
   </nav>
