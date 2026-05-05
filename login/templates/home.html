@@ -18,6 +18,7 @@
       <li><a href="{% url 'listings' %}">Inventory</a></li>
       <li><a href="{% url 'sell' %}">Sell Your Car</a></li>
       <li><a href="{% url 'about' %}">About</a></li>
+      <li><a href="{% url 'predict_price' %}">Predict Price</a></li>
     </ul>
     <div class="nav__actions">
       {% if user.is_authenticated %}

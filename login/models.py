@@ -82,3 +82,12 @@ class CarImage(models.Model):
 
     def __str__(self):
         return f"Image for {self.car.make} {self.car.model}"
+    
+
+class Carprediction(models.Model):
+    car = models.ForeignKey(cars, on_delete=models.CASCADE, related_name='predictions')
+    predicted_price = models.DecimalField(max_digits=12, decimal_places=2)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Prediction for {self.car.make} {self.car.model}: {self.predicted_price}"

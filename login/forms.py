@@ -22,3 +22,16 @@ class updateprofileform(forms.ModelForm):
         model = User
        
         fields = ['first_name', 'last_name',  'phone_number','profile_picture']
+
+class CarPredictionForm(forms.Form):
+    year = forms.IntegerField(label='Year of Purchase', min_value=2000, max_value=2024)
+    kms_driven = forms.IntegerField(label='Kms Driven')
+    max_power = forms.FloatField(label='Max Power (BHP)')
+
+    FUEL_CHOICES = [(0, 'Petrol'), (1, 'Diesel'), (2, 'CNG'), (3, 'LPG'), (4, 'Electric')]
+    SELLER_CHOICES = [(0, 'Individual'), (1, 'Dealer'), (2, 'Trustmark Dealer')]
+    TRANSMISSION_CHOICES = [(0, 'Manual'), (1, 'Automatic')]
+
+    fuel_type = forms.ChoiceField(choices=FUEL_CHOICES)
+    seller_type = forms.ChoiceField(choices=SELLER_CHOICES)
+    transmission = forms.ChoiceField(choices=TRANSMISSION_CHOICES)

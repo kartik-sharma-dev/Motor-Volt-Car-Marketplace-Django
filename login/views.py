@@ -1,9 +1,10 @@
+import os
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.contrib.auth import login, logout as auth_logout, update_session_auth_hash
 import requests
 from django.conf import settings
-from .forms import UserForm, CarForm, updateprofileform
+from .forms import CarPredictionForm, UserForm, CarForm, updateprofileform
 from .models import CarImage, User, cars
 from django.contrib import messages
 import random
@@ -12,6 +13,9 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from .models import User, cars
+import pickle
+import numpy as np
+
 
 def _send_otp_email(to_email, otp):
     response = requests.post(
@@ -450,3 +454,50 @@ def verify_otp(request):
         messages.error(request, 'Invalid OTP.')
 
     return render(request, 'verify_otp.html')
+
+with open(os.path.join(os.path.dirname(__file__), 'car_price_model_v2.pkl'), 'rb') as f:
+    model_data = pickle.load(f)
+
+w = model_data['w']
+b = model_data['b']
+X_mean = model_data['X_mean']
+X_std = model_data['X_std']
+y_mean = model_data['y_mean']
+y_std = model_data['y_std']
+
+def predict_price(request):
+    estimated_price = None
+    form = CarPredictionForm()
+
+    if request.method == 'POST':
+        form = CarPredictionForm(request.POST)
+        if form.is_valid():
+            d = form.cleaned_data
+
+            car_age = 2025 - d['year']
+            age_squared = car_age ** 2
+            kms_per_age = d['kms_driven'] / car_age
+
+            features = np.array([[
+                car_age,
+                d['kms_driven'],
+                int(d['seller_type']),
+                int(d['fuel_type']),
+                int(d['transmission']),
+                d['max_power'],
+                age_squared,
+                kms_per_age
+            ]])
+
+            features_scaled = (features - X_mean) / X_std
+            price_scaled = np.dot(features_scaled, w).item() + b
+            estimated_price = round(float((price_scaled * y_std) + y_mean), 2)
+
+            if estimated_price < 0:
+                estimated_price = 0.0
+
+    return render(request, 'predict.html', {
+        'form': form,
+        'estimated_price': estimated_price,
+        'prediction_made': estimated_price is not None,
+    })

@@ -1,0 +1,196 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Car Price Prediction — MotorVault</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/prediction.css' %}">
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <a href="{% url 'home' %}" class="logo">MOTOR<span>VAULT</span></a>
+    <div class="nav-links">
+      <a href="{% url 'listings' %}">Inventory</a>
+      <a href="{% url 'sell' %}">Sell Your Car</a>
+      <a href="{% url 'about' %}">About</a>
+    </div>
+    <a href="{% url 'dashboard' %}" class="btn-ghost">Dashboard</a>
+    <button class="nav-toggle" id="navToggle">&#9776;</button>
+  </nav>
+
+  <!-- HEADER -->
+  <div class="header">
+    <span class="badge">AI Powered</span>
+    <h1 class="header__title">CAR PRICE <span>PREDICTION</span></h1>
+    <p class="header__sub">Enter your car's details and our model will estimate its current market value.</p>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main-wrap">
+
+    <!-- FORM CARD -->
+    <div class="form-card">
+      <h2 class="form-card__title">Vehicle Details</h2>
+
+      <form method="POST">
+        {% csrf_token %}
+        {% if form.errors %}
+          <p class="err" style="margin-bottom:1rem">Please fix the errors below and try again.</p>
+        {% endif %}
+
+        <div class="row-2">
+          <div class="field">
+            <label for="year">Year of Purchase *</label>
+            <input type="number" id="year" name="year"
+                   placeholder="e.g. 2019" min="2000" max="2024"
+                   value="{{ form.year.value|default:'' }}" required>
+            {% if form.year.errors %}<p class="err">{{ form.year.errors.0 }}</p>{% endif %}
+          </div>
+          <div class="field">
+            <label for="kms_driven">Kms Driven *</label>
+            <div class="input-suffix-wrap">
+              <input type="number" id="kms_driven" name="kms_driven"
+                     placeholder="e.g. 35000" min="0"
+                     value="{{ form.kms_driven.value|default:'' }}" required>
+              <span class="suffix">km</span>
+            </div>
+            {% if form.kms_driven.errors %}<p class="err">{{ form.kms_driven.errors.0 }}</p>{% endif %}
+          </div>
+        </div>
+
+        <div class="row-2">
+          <div class="field">
+            <label for="max_power">Max Power (BHP) *</label>
+            <input type="number" id="max_power" name="max_power"
+                   placeholder="e.g. 82" step="0.1" min="0"
+                   value="{{ form.max_power.value|default:'' }}" required>
+            <p class="hint">Found on RC book or car website</p>
+            {% if form.max_power.errors %}<p class="err">{{ form.max_power.errors.0 }}</p>{% endif %}
+          </div>
+          <div class="field">
+            <label for="fuel_type">Fuel Type *</label>
+            <select id="fuel_type" name="fuel_type" required>
+              <option value="">Select</option>
+              <option value="0" {% if form.fuel_type.value == '0' %}selected{% endif %}>Petrol</option>
+              <option value="1" {% if form.fuel_type.value == '1' %}selected{% endif %}>Diesel</option>
+              <option value="2" {% if form.fuel_type.value == '2' %}selected{% endif %}>CNG</option>
+              <option value="3" {% if form.fuel_type.value == '3' %}selected{% endif %}>LPG</option>
+              <option value="4" {% if form.fuel_type.value == '4' %}selected{% endif %}>Electric</option>
+            </select>
+            {% if form.fuel_type.errors %}<p class="err">{{ form.fuel_type.errors.0 }}</p>{% endif %}
+          </div>
+        </div>
+
+        <div class="row-2">
+          <div class="field">
+            <label for="seller_type">Seller Type *</label>
+            <select id="seller_type" name="seller_type" required>
+              <option value="">Select</option>
+              <option value="0" {% if form.seller_type.value == '0' %}selected{% endif %}>Individual</option>
+              <option value="1" {% if form.seller_type.value == '1' %}selected{% endif %}>Dealer</option>
+              <option value="2" {% if form.seller_type.value == '2' %}selected{% endif %}>Trustmark Dealer</option>
+            </select>
+            {% if form.seller_type.errors %}<p class="err">{{ form.seller_type.errors.0 }}</p>{% endif %}
+          </div>
+          <div class="field">
+            <label for="transmission">Transmission *</label>
+            <select id="transmission" name="transmission" required>
+              <option value="">Select</option>
+              <option value="0" {% if form.transmission.value == '0' %}selected{% endif %}>Manual</option>
+              <option value="1" {% if form.transmission.value == '1' %}selected{% endif %}>Automatic</option>
+            </select>
+            {% if form.transmission.errors %}<p class="err">{{ form.transmission.errors.0 }}</p>{% endif %}
+          </div>
+        </div>
+
+        <button type="submit" class="btn-predict">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          Predict Price
+        </button>
+
+      </form>
+    </div>
+
+    <!-- RESULT CARD -->
+    <div class="result-card {% if not prediction_made %}result-card--empty{% endif %}">
+
+      {% if prediction_made %}
+        <!-- Result -->
+        <p class="result-label">Estimated Market Value</p>
+
+        <div class="result-center">
+          <p class="result-center__label">Best Estimate</p>
+          <p class="result-center__value">₹ {{ estimated_price }}L</p>
+        </div>
+
+        <div class="result-tags">
+          {% if form.fuel_type.value == '0' %}<span class="tag">⛽ Petrol</span>{% endif %}
+          {% if form.fuel_type.value == '1' %}<span class="tag">🛢 Diesel</span>{% endif %}
+          {% if form.fuel_type.value == '2' %}<span class="tag">💨 CNG</span>{% endif %}
+          {% if form.fuel_type.value == '3' %}<span class="tag">🔥 LPG</span>{% endif %}
+          {% if form.fuel_type.value == '4' %}<span class="tag">⚡ Electric</span>{% endif %}
+          {% if form.transmission.value == '0' %}<span class="tag">Manual</span>{% endif %}
+          {% if form.transmission.value == '1' %}<span class="tag">Automatic</span>{% endif %}
+          {% if form.year.value %}<span class="tag">{{ form.year.value }}</span>{% endif %}
+          {% if form.kms_driven.value %}<span class="tag">{{ form.kms_driven.value }} km</span>{% endif %}
+          {% if form.max_power.value %}<span class="tag">{{ form.max_power.value }} BHP</span>{% endif %}
+        </div>
+
+        <p class="result-note">* Estimate based on 15,000+ real car listings</p>
+
+      {% else %}
+        <!-- Empty state -->
+        <div class="result-empty">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" width="48" height="48"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 5v4h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+          <p class="result-empty__title">Your result will appear here</p>
+          <p class="result-empty__sub">Fill in the form and click Predict Price</p>
+        </div>
+      {% endif %}
+
+    </div>
+
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <div class="how-it-works">
+    <p class="how-label">HOW IT WORKS</p>
+    <div class="how-steps">
+      <div class="how-step">
+        <div class="how-step__num">1</div>
+        <p class="how-step__text">Fill in your car's details accurately</p>
+      </div>
+      <div class="how-arrow">→</div>
+      <div class="how-step">
+        <div class="how-step__num">2</div>
+        <p class="how-step__text">Our ML model analyses the data</p>
+      </div>
+      <div class="how-arrow">→</div>
+      <div class="how-step">
+        <div class="how-step__num">3</div>
+        <p class="how-step__text">Get an estimated price instantly</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <p>&copy; 2025 MotorVault. Price predictions are estimates only and not financial advice.</p>
+    <div>
+      <a href="{% url 'privacy' %}">Privacy</a>
+      <a href="{% url 'terms' %}">Terms</a>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('navToggle').addEventListener('click', function () {
+      document.querySelector('.nav-links').classList.toggle('open');
+    });
+  </script>
+
+</body>
+</html>

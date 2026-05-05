@@ -25,6 +25,7 @@ urlpatterns = [
     path('about/', views.about, name='about'),
     path('search/', views.search, name='search'),
     path('car/<int:pk>/', views.car_detail, name='car_detail'),
+    path('predict/', views.predict_price, name='predict_price'),
   
 
     
@@ -32,6 +33,7 @@ urlpatterns = [
     path('contact/', views.contact, name='contact'),
     path('privacy/', views.privacy, name='privacy'),
     path('terms/', views.terms, name='terms'),
+
    
     path('update-profile/', views.update_profile, name='update_profile'),
 
