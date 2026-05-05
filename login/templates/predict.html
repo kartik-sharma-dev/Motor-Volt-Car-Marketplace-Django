@@ -49,6 +49,7 @@
             <input type="number" id="year" name="year"
                    placeholder="e.g. 2019" min="2000" max="2024"
                    value="{{ form.year.value|default:'' }}" required>
+            <p class="hint">Cars purchased before 2005 (20+ years old) will likely return ₹0 — the model is trained on modern vehicles.</p>
             {% if form.year.errors %}<p class="err">{{ form.year.errors.0 }}</p>{% endif %}
           </div>
           <div class="field">
@@ -59,6 +60,7 @@
                      value="{{ form.kms_driven.value|default:'' }}" required>
               <span class="suffix">km</span>
             </div>
+            <p class="hint">Above 1,50,000 km on an older or low-power car may push the estimate to ₹0.</p>
             {% if form.kms_driven.errors %}<p class="err">{{ form.kms_driven.errors.0 }}</p>{% endif %}
           </div>
         </div>
@@ -69,7 +71,7 @@
             <input type="number" id="max_power" name="max_power"
                    placeholder="e.g. 82" step="0.1" min="0"
                    value="{{ form.max_power.value|default:'' }}" required>
-            <p class="hint">Found on RC book or car website</p>
+            <p class="hint">Found on RC book or car website. Below 50 BHP (old hatchbacks, entry CNG cars) may return ₹0 if the car is also old or high-mileage.</p>
             {% if form.max_power.errors %}<p class="err">{{ form.max_power.errors.0 }}</p>{% endif %}
           </div>
           <div class="field">
@@ -82,6 +84,7 @@
               <option value="3" {% if form.fuel_type.value == '3' %}selected{% endif %}>LPG</option>
               <option value="4" {% if form.fuel_type.value == '4' %}selected{% endif %}>Electric</option>
             </select>
+            <p class="hint">CNG and LPG cars are valued lower by the model — combine with a recent year and decent BHP for a valid estimate.</p>
             {% if form.fuel_type.errors %}<p class="err">{{ form.fuel_type.errors.0 }}</p>{% endif %}
           </div>
         </div>
@@ -95,6 +98,7 @@
               <option value="1" {% if form.seller_type.value == '1' %}selected{% endif %}>Dealer</option>
               <option value="2" {% if form.seller_type.value == '2' %}selected{% endif %}>Trustmark Dealer</option>
             </select>
+            <p class="hint">Trustmark Dealer listings tend to fetch higher estimates than Individual sellers.</p>
             {% if form.seller_type.errors %}<p class="err">{{ form.seller_type.errors.0 }}</p>{% endif %}
           </div>
           <div class="field">
@@ -104,6 +108,7 @@
               <option value="0" {% if form.transmission.value == '0' %}selected{% endif %}>Manual</option>
               <option value="1" {% if form.transmission.value == '1' %}selected{% endif %}>Automatic</option>
             </select>
+            <p class="hint">Automatic cars are valued higher on average — Manual on an old, high-mileage car increases the chance of a ₹0 result.</p>
             {% if form.transmission.errors %}<p class="err">{{ form.transmission.errors.0 }}</p>{% endif %}
           </div>
         </div>

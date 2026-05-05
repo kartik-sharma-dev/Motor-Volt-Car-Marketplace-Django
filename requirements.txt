@@ -10,6 +10,8 @@ django-semantic-forms==0.1.11
 dotenv==0.9.9
 gunicorn==25.3.0
 idna==3.13
+joblib==1.5.3
+numpy==2.4.4
 packaging==26.2
 pillow==12.2.0
 psycopg2-binary==2.9.12
